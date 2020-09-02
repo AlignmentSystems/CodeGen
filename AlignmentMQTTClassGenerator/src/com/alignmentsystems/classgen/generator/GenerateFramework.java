@@ -16,6 +16,7 @@ import java.util.Objects;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.MethodInvocationException;
 import org.apache.velocity.exception.ParseErrorException;
 import org.apache.velocity.exception.ResourceNotFoundException;
 import org.slf4j.Logger;
@@ -29,10 +30,6 @@ import com.alignmentsystems.classgen.interfaces.Action;
 public class GenerateFramework implements Runnable , Action{
 	private final Logger log = LoggerFactory.getLogger(GenerateFramework.class);
 	private String[] privateArgs = null;
-	private Boolean logIt = Boolean.FALSE;
-	private final ImplementationLanguage implementationLanguage = ImplementationLanguage.Java;
-	private final static String packageNameForMessagesT = "com.alignmentsystems.sbe";
-	private final static String templateNameForTransactions = "resources/vtemplates/class.vm";
 
 
 
@@ -49,17 +46,31 @@ public class GenerateFramework implements Runnable , Action{
 	 * 
 	 * @param writer
 	 * @param modelName
+	 * @param implementationLanguage
 	 * @return
 	 */
-	protected Boolean writeToFile(StringWriter writer, String modelName) {
+	protected Boolean writeToFile(StringWriter writer , String modelName , ImplementationLanguage implementationLanguage) {
+		final String methodName = this.getClass().getSimpleName() + "::writeToFile";	
+		final String extensionForJava = ".java";
+		final String extensionForQ = ".q";
+		String extensionToUse = null; 
+
+		if (implementationLanguage==ImplementationLanguage .Java) {
+			extensionToUse = extensionForJava;
+		}else if (implementationLanguage==ImplementationLanguage.q) {
+			extensionToUse = extensionForQ;
+		}
+
+
 		Boolean retVal = Boolean.FALSE;
 
 		try {
-			PrintWriter out = new PrintWriter(modelName + ".java");
+			PrintWriter out = new PrintWriter(modelName + extensionToUse);
 			out.println(writer.toString());
 			out.close();
+			retVal = Boolean.TRUE;
 		} catch (FileNotFoundException e) {
-			log.error(e.toString(),e);
+			this.actionEventError(methodName, e.toString());
 		}
 		return retVal;
 	}
@@ -73,10 +84,18 @@ public class GenerateFramework implements Runnable , Action{
 	public void run() {
 		final String methodName = this.getClass().getSimpleName() + "<run>";	
 
-		final Boolean doWeValidateSchemeVersusXSD = Boolean.FALSE;
-		final String pathToApplicationMessagesSchema = "resources/schema/Examples.xml";
+		final Boolean doWeValidateSchemeVersusXSD = Boolean.TRUE;
+		final String pathToApplicationMessagesSchema = "resources/schema/ExampleSensor.xml";
+
+		//final String pathToApplicationMessagesSchema = "resources/schema/Examples.xml";
 		final String pathToApplicationMessagesXSD = "resources/xsd/sbe.xsd";
+		final String templateNameForJava = "resources/vtemplates/class.java.vm";
+		final String templateNameForQ = "resources/vtemplates/class.kdb.vm";
+
 		final XMLFunctions functions = new XMLFunctions();
+
+
+
 		functions.addListener(this);
 
 		VelocityEngine velocityEngine = new VelocityEngine();
@@ -85,107 +104,150 @@ public class GenerateFramework implements Runnable , Action{
 
 		if (doWeValidateSchemeVersusXSD) {
 			Boolean isValid = functions.validateXMLSchema(pathToApplicationMessagesXSD, pathToApplicationMessagesSchema);
+			if(isValid) {
+				this.actionEvent(methodName, pathToApplicationMessagesSchema + " validated against " + pathToApplicationMessagesXSD);
+			}else {
+				this.actionEventError(methodName, pathToApplicationMessagesSchema + " not validated against " + pathToApplicationMessagesXSD);
+			}
 		}
 
-
-		List<String> listOfMessageNames = null;
 		try {
-			listOfMessageNames = functions.getMessageListFromXML(pathToApplicationMessagesSchema);
+			final List<String> listOfMessageNames = functions.getMessageListFromXML(pathToApplicationMessagesSchema);
+			listOfMessageNames.forEach(entry->{
+				ImplementationLanguage writeLanguage; 
+				writeLanguage = ImplementationLanguage.Java;
+				Boolean executeJava = executeForImplementation(
+						velocityEngine
+						, functions 
+						, entry.toString()						
+						, templateNameForJava
+						, pathToApplicationMessagesSchema 
+						, writeLanguage
+						);
+				if(executeJava) {
+					this.actionEvent(methodName , entry.toString() + " [" + writeLanguage.name() + "] written to file..."); 
+				}else {
+					this.actionEventError(methodName , entry.toString() + " not written to file...");
+				}
+
+				writeLanguage = ImplementationLanguage.q;
+				Boolean executeQ = executeForImplementation(
+						velocityEngine
+						, functions 
+						, entry.toString()						
+						, templateNameForQ
+						, pathToApplicationMessagesSchema 
+						, writeLanguage
+						);
+				if(executeQ) {
+					this.actionEvent(methodName , entry.toString() + " [" + writeLanguage.name() + "] written to file..."); 
+				}else {
+					this.actionEventError(methodName , entry.toString() + " not written to file...");
+				}
+			});
 		} catch (MessageListException e) {
 			this.actionEventError(methodName, e.toString());
 		}
-
-		//		listOfMessageNames.forEach(entry->{
-		//			log.info(entry.toString());
-		//		});
-		//
-
-		listOfMessageNames.forEach(entry->{
-
-			Template t = null;
-			
-			try {
-				t = velocityEngine.getTemplate(templateNameForTransactions);
-			}catch(ResourceNotFoundException | ParseErrorException e) {
-				this.actionEventError(methodName, e.toString());
-			} 
-
-			
-			
-			String modelName;
-			String author = null;
-			String creationDate = null;
-			String packageNameForTransactions = null;
-
-			modelName = entry.toString();
+	}
 
 
-			List<Field> properties = null;
-			try {
-				properties = functions.getFieldListFromXMLForThisMessage(modelName, pathToApplicationMessagesSchema);
-			} catch (FieldListException e) {
-				this.actionEventError(methodName, e.toString());
-			}					
+	/**
+	 * 
+	 * @param velocityEngine VelocityEngine
+	 * @param modelName String
+	 * @param templateName String
+	 * @param implementationLanguage ImplementationLanguage
+	 * @return Boolean 
+	 */
+	private Boolean executeForImplementation(VelocityEngine velocityEngine , XMLFunctions functions ,String modelName , String templateName , String pathToSchema , ImplementationLanguage implementationLanguage) {
+		final String methodName = this.getClass().getSimpleName() + "::executeForImplementation";	
 
-			for (Field fld : properties ) {
-				log.info(fld.toString());
-			}
+		final String packageNameForMessagesT = "com.alignmentsystems.sbe";
+		final String author = GeneratorFunctions.getOneLineComment("Author : John Greenan" , implementationLanguage);
+		final String creationDate = GeneratorFunctions.getOneLineComment("Creation Date : " + GeneratorFunctions.getCreationDate(),implementationLanguage);
+		final String packageNameForTransactions = GeneratorFunctions.getDateValue(packageNameForMessagesT);
 
 
+		Boolean retVal = Boolean.FALSE;
 
-			author = GeneratorFunctions.getOneLineComment("Author : John Greenan", implementationLanguage);
-			creationDate = GeneratorFunctions.getOneLineComment("Creation Date : " + GeneratorFunctions.getCreationDate(),implementationLanguage);
-			packageNameForTransactions = GeneratorFunctions.getDateValue(packageNameForMessagesT);
+		Template t = null;
 
-			VelocityContext context = new VelocityContext();
+		try {
+			t = velocityEngine.getTemplate(templateName);
+		}catch(ResourceNotFoundException | ParseErrorException e) {
+			this.actionEventError(methodName, e.toString());
+		} 
 
+
+		List<Field> properties = null;
+		try {
+			properties = functions.getFieldListFromXMLForThisMessage(modelName, pathToSchema, implementationLanguage);
+		} catch (FieldListException e) {
+			this.actionEventError(methodName, e.toString());
+		}					
+
+		for (Field fld : properties ) {
+			this.actionEvent(methodName, fld.toString());
+		}
+
+		VelocityContext context = new VelocityContext();
+
+
+		if (implementationLanguage==ImplementationLanguage.Java) {
 			if(Objects.isNull(packageNameForTransactions)){ 
 				//do nothing...
 			}else {
 				context.put("packagename", packageNameForTransactions);
 			}
+		}
 
-			if(Objects.isNull(author)){ 
-				//do nothing...
-			}else {
-				context.put("author", author);
-			}
-
-
-			if(Objects.isNull(modelName)){ 
-				//do nothing...
-			}else {
-				context.put("className", modelName);
-
-			}
-
-			if(Objects.isNull(properties)){ 
-				//do nothing...
-			}else {
-				context.put("properties", properties);
-			}
+		if(Objects.isNull(author)){ 
+			//do nothing...
+		}else {
+			context.put("author", author);
+		}
 
 
+		if(Objects.isNull(modelName)){ 
+			//do nothing...
+		}else {
+			context.put("className", modelName);
 
-			if(Objects.isNull(creationDate)){ 
-				//do nothing...
-			}else {
-				context.put("creationDate", creationDate);
-			}
+		}
+
+		if(Objects.isNull(properties)){ 
+			//do nothing...
+		}else {
+			context.put("properties", properties);
+		}
 
 
 
-			StringWriter writer = new StringWriter();
+		if(Objects.isNull(creationDate)){ 
+			//do nothing...
+		}else {
+			context.put("creationDate", creationDate);
+		}
+
+		StringWriter writer = new StringWriter();
+
+
+		try {
 			t.merge( context, writer );
+		}catch(ResourceNotFoundException e) {
+			this.actionEventError(methodName, e.toString());
+		}catch(ParseErrorException e) { 
+			this.actionEventError(methodName, e.toString());
+		}catch(MethodInvocationException e) {
+			this.actionEventError(methodName, e.toString());
+		}
 
+		retVal = writeToFile(writer, modelName, implementationLanguage); 
 
-			System.out.println(writer.toString());	
-
-			writeToFile(writer, modelName);
-
-			//break;
-		});
+		return retVal;
 	}
+
+
 
 	@Override
 	public void actionEvent(String methodName, String event) {

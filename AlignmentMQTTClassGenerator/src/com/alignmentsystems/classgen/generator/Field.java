@@ -11,7 +11,7 @@ import java.util.Locale;
 
 public class Field {
     private String fieldName;
-    private String fieldTypeJava;
+    private String fieldTypeImplementationLanguage;
     private String fieldTypeXML;
     private String description;
     private Boolean inConstructorOne;
@@ -22,19 +22,19 @@ public class Field {
  * 
  * @param fieldName
  * @param fieldTypeXML
- * @param fieldTypeJava
+ * @param fieldTypeImplementationLanguage
  * @param inConstructorOne
  * @param description
  * @param semanticType
  */
-    public Field(String fieldName, String fieldTypeXML, String fieldTypeJava,  Boolean inConstructorOne, String description, String semanticType) {
+    public Field(String fieldName, String fieldTypeXML, String fieldTypeImplementationLanguage,  Boolean inConstructorOne, String description, String semanticType) {
         super();
         this.fieldName = fieldName;
         this.fieldTypeXML = fieldTypeXML;
         this.inConstructorOne = inConstructorOne;
         this.description = description;
         this.semanticType = semanticType;
-        this.fieldTypeJava = fieldTypeJava ; 
+        this.fieldTypeImplementationLanguage = fieldTypeImplementationLanguage ; 
     }
 
     /**
@@ -84,8 +84,8 @@ public class Field {
     }
       
     
-    public String getFieldTypeJava() {
-        return this.fieldTypeJava;
+    public String getFieldTypeImplementationLanguage() {
+        return this.fieldTypeImplementationLanguage;
     }
     
     /**
@@ -116,14 +116,14 @@ public class Field {
      * 
      * @param fieldType
      */
-    public void setFieldTypeJava(String fieldTypeJava) {
-        this.fieldTypeJava = fieldTypeJava;
+    public void setFieldTypeImplementationLanguage(String fieldTypeImplementationLanguage) {
+        this.fieldTypeImplementationLanguage = fieldTypeImplementationLanguage;
     }
 
 	@Override
 	public String toString() {
 		return "Field [fieldName=" + fieldName 
-				+ ", fieldTypeJava=" + fieldTypeJava
+				+ ", fieldTypeImplementationLanguage=" + fieldTypeImplementationLanguage
 				+ ", fieldTypeXML=" + fieldTypeXML
 				+ ", description=" + description
 				+ ", inConstructorOne=" + inConstructorOne 

@@ -1,19 +1,19 @@
-package com.alignmentsystems.sbe._2020_09_01_08_39_34;
+package com.alignmentsystems.sbe._2020_09_02_01_26_02;
 
 
 //Author : John Greenan
-//Creation Date : 2020_09_01_08_39_34
+//Creation Date : 2020_09_02_01_26_02
 
 public class ExecutionReport implements Serializable {
 
  /** Serial Version UID. */
  private static final long serialVersionUID = 1L;
 
- private String orderID;
- private String execID;
+ private idString orderID;
+ private idString execID;
  private execTypeEnum execType;
  private ordStatusEnum ordStatus;
- private String symbol;
+ private idString symbol;
  private MONTH_YEAR maturityMonthYear;
  private sideEnum side;
  private qtyEncoding leavesQty;
@@ -34,7 +34,7 @@ public class ExecutionReport implements Serializable {
 
 
 
-public ExecutionReport(String orderID , String execID , execTypeEnum execType , ordStatusEnum ordStatus , String symbol , MONTH_YEAR maturityMonthYear , sideEnum side , qtyEncoding leavesQty , qtyEncoding cumQty , date tradeDate , optionalDecimalEncoding fillPx , qtyEncoding fillQty){
+public ExecutionReport(idString orderID , idString execID , execTypeEnum execType , ordStatusEnum ordStatus , idString symbol , MONTH_YEAR maturityMonthYear , sideEnum side , qtyEncoding leavesQty , qtyEncoding cumQty , date tradeDate , optionalDecimalEncoding fillPx , qtyEncoding fillQty){
 	this.OrderID = orderID ,
 	this.ExecID = execID ,
 	this.ExecType = execType ,
@@ -109,18 +109,18 @@ public String toString() {
 
 
  
- public String getOrderID() {
+ public idString getOrderID() {
      return this.orderID;
  }
  
- public void setOrderID(String orderID) {
+ public void setOrderID(idString orderID) {
      this.orderID = orderID;
  } 
- public String getExecID() {
+ public idString getExecID() {
      return this.execID;
  }
  
- public void setExecID(String execID) {
+ public void setExecID(idString execID) {
      this.execID = execID;
  } 
  public execTypeEnum getExecType() {
@@ -137,11 +137,11 @@ public String toString() {
  public void setOrdStatus(ordStatusEnum ordStatus) {
      this.ordStatus = ordStatus;
  } 
- public String getSymbol() {
+ public idString getSymbol() {
      return this.symbol;
  }
  
- public void setSymbol(String symbol) {
+ public void setSymbol(idString symbol) {
      this.symbol = symbol;
  } 
  public MONTH_YEAR getMaturityMonthYear() {

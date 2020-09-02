@@ -11,18 +11,15 @@ import java.util.HashMap;
 
 public final  class MapDataTypes {
 
-	private static HashMap<String, Mapper> fromXmlToJavaType = new HashMap<>();
-	private static HashMap<String, Mapper> fromXmlToqType = new HashMap<>();
-
+	private HashMap<String, Mapper> fromXmlToJavaType = new HashMap<>();
+	private HashMap<String, Mapper> fromXmlToqType = new HashMap<>();
 	
-	/**
-	 * 
-	 */
 	public MapDataTypes() {		
-		fromXmlToJavaType.put("idString", new Mapper(String.class.getSimpleName(), null,null));
-		fromXmlToJavaType.put("DATA", new Mapper(String.class.getSimpleName(), null,null));
+		fromXmlToJavaType.put("idString", new Mapper(String.class.getSimpleName(), null , null));
+		fromXmlToJavaType.put("DATA", new Mapper(String.class.getSimpleName(), null , null));
+		fromXmlToJavaType.put("obs", new Mapper(Long.class.getSimpleName(), null , null));
 			
-		
+		fromXmlToqType.put("obs", new Mapper("`long$()", null , null));
 	}
 	
 	/**
@@ -30,7 +27,7 @@ public final  class MapDataTypes {
 	 * @param xmlTypeName
 	 * @return
 	 */
-	public static String getJavaTypeNameForXMLTypeName(String xmlTypeName) {
+	public String getJavaTypeNameForXMLTypeName(String xmlTypeName) {
 		if (fromXmlToJavaType.containsKey(xmlTypeName)) {
 			return fromXmlToJavaType.get(xmlTypeName).getJavaFieldName();
 		}else {
@@ -44,7 +41,7 @@ public final  class MapDataTypes {
 	 * @param xmlTypeName
 	 * @return
 	 */
-	public static String getQTypeNameForXMLTypeName(String xmlTypeName) {
+	public String getQTypeNameForXMLTypeName(String xmlTypeName) {
 		if (fromXmlToqType.containsKey(xmlTypeName)) {
 			return fromXmlToqType.get(xmlTypeName).getJavaFieldName();
 		}else {
