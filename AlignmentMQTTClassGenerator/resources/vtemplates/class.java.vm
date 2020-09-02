@@ -10,7 +10,7 @@ public class ${className} implements Serializable {
  private static final long serialVersionUID = 1L;
 
 #foreach($property in $properties )
- private $property.getFieldTypeJava() $property.getFieldNameLowercaseFirstLetter();
+ private $property.getFieldTypeImplementationLanguage() $property.getFieldNameLowercaseFirstLetter();
 #end 
 
 //Implementation required
@@ -28,12 +28,12 @@ public class ${className} implements Serializable {
 #set($equals="=")
 
 #foreach($property in $properties )
-#if( $foreach.index ==0) #set($foo=$property.getFieldTypeJava()+$space+$property.getFieldNameLowercaseFirstLetter()+$space+$comma+$space) 
+#if( $foreach.index ==0) #set($foo=$property.getFieldTypeImplementationLanguage()+$space+$property.getFieldNameLowercaseFirstLetter()+$space+$comma+$space) 
 #else
 #if( $foreach.hasNext )
-#set($foo=$foo+$property.getFieldTypeJava()+$space+$property.getFieldNameLowercaseFirstLetter()+$space+$comma+$space) 
+#set($foo=$foo+$property.getFieldTypeImplementationLanguage()+$space+$property.getFieldNameLowercaseFirstLetter()+$space+$comma+$space) 
 #else
-#set($foo=$foo+$property.getFieldTypeJava()+$space+$property.getFieldNameLowercaseFirstLetter())
+#set($foo=$foo+$property.getFieldTypeImplementationLanguage()+$space+$property.getFieldNameLowercaseFirstLetter())
 #end
 #end 
 #end 
@@ -108,11 +108,11 @@ public String toString() {
 
  
 #foreach($property in $properties )
- public ${property.getFieldTypeJava()} get${property.getProperFieldName()}() {
+ public ${property.getFieldTypeImplementationLanguage()} get${property.getProperFieldName()}() {
      return this.${property.getFieldNameLowercaseFirstLetter()};
  }
  
- public void set${property.getProperFieldName()}(${property.getFieldTypeJava()} ${property.getFieldNameLowercaseFirstLetter()}) {
+ public void set${property.getProperFieldName()}(${property.getFieldTypeImplementationLanguage()} ${property.getFieldNameLowercaseFirstLetter()}) {
      this.${property.getFieldNameLowercaseFirstLetter()} = ${property.getFieldNameLowercaseFirstLetter()};
  } 
 #end

@@ -2,13 +2,11 @@ package com.alignmentsystems.classgen.generator;
 /******************************************************************************
  * 
  * Author          : John Greenan
- * Date            : 1st September 2020
- * Copyright       : Alignment Systems Ltd 2020
+ * Date            : 1st April 2020
+ * Copyright       : Alignment Systems Ltd 2018-2019-2020
  * 
  *****************************************************************************/
-
 import static org.w3c.dom.Node.ATTRIBUTE_NODE;
-import static org.w3c.dom.Node.CDATA_SECTION_NODE;
 import static org.w3c.dom.Node.COMMENT_NODE;
 import static org.w3c.dom.Node.DOCUMENT_TYPE_NODE;
 import static org.w3c.dom.Node.ELEMENT_NODE;
@@ -17,6 +15,7 @@ import static org.w3c.dom.Node.ENTITY_REFERENCE_NODE;
 import static org.w3c.dom.Node.NOTATION_NODE;
 import static org.w3c.dom.Node.PROCESSING_INSTRUCTION_NODE;
 import static org.w3c.dom.Node.TEXT_NODE;
+import static org.w3c.dom.Node.CDATA_SECTION_NODE;
 
 import java.io.File;
 import java.io.IOException;
@@ -45,6 +44,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.alignmentsystems.classgen.enumerations.ImplementationLanguage;
 import com.alignmentsystems.classgen.exceptions.FieldListException;
 import com.alignmentsystems.classgen.exceptions.MessageListException;
 import com.alignmentsystems.classgen.interfaces.Action;
@@ -56,7 +56,6 @@ public class XMLFunctions implements Action{
 	private final static String stringName= "name";
 	private final static String stringSemanticType = "semanticType";
 	private final static String stringType = "type";
-	private final static String stringInConstructorOne= "type";
 
 	private List<Action> listeners = new ArrayList<Action>();
 
@@ -114,7 +113,7 @@ public class XMLFunctions implements Action{
 		final String tagNameToTarget = "sbe:message";
 		final String namespaceAddress = "http://fixprotocol.io/2016/sbe";
 		final String namespaceName = "sbe";
-		List<Field> properties = new ArrayList<>();
+	//	List<Field> properties = new ArrayList<>();
 
 		List<String> listOfMessageNames = new ArrayList<>();
 
@@ -148,10 +147,10 @@ public class XMLFunctions implements Action{
 
 		}else {
 
-			String messageName = null;
-			String messageDescription = null;
-			String messageID = null;
-			String messageSemanticType = null; 
+		//	String messageName = null;
+		//	String messageDescription = null;
+		//	String messageID = null;
+		//	String messageSemanticType = null; 
 
 			XPath xPath = XPathFactory.newInstance().newXPath();
 			HashMap<String, String> prefMap = new HashMap<String, String>() {{put(namespaceName, namespaceAddress);}};
@@ -184,7 +183,7 @@ public class XMLFunctions implements Action{
 
 
 
-	public List<Field> getFieldListFromXMLForThisMessage(String  modelName, String pathToApplicationMessagesSchema) throws FieldListException{
+	public List<Field> getFieldListFromXMLForThisMessage(String  modelName, String pathToApplicationMessagesSchema, ImplementationLanguage implementationLanguage) throws FieldListException{
 		final String methodName = this.getClass().getSimpleName() + "::getFieldListFromXMLForThisMessage";	
 		final String namespaceToTarget = "sbe:messageSchema";
 		final String tagNameToTarget = "sbe:message";
@@ -262,21 +261,19 @@ public class XMLFunctions implements Action{
 								this.actionEvent(methodName , sb.toString());
 
 
-								listNodes(list.item(i),"  ", properties);	
+								listNodes(list.item(i),"  ", properties , implementationLanguage);	
 							}else {
 								//Ignore.....
-								System.out.println("Ignore=" + messageName);
+								this.actionEventError(methodName , "Ignore=" + messageName);
 							}
 						}
 					}else {
-						System.out.println("List is zero length");
+						this.actionEventError(methodName , "List is zero length");
 					}
 				}
 			} catch (XPathExpressionException e) {
-				System.out.println("Exception: "+e.getMessage());
+				this.actionEventError(methodName , e.getMessage());
 			}
-
-
 		}
 		return properties;
 	}
@@ -334,7 +331,7 @@ public class XMLFunctions implements Action{
 	 * @param log
 	 * @param properties
 	 */
-	private void listNodes(Node node, String indent , List<Field> properties) {
+	private void listNodes(Node node, String indent , List<Field> properties , ImplementationLanguage implementationLanguage) {
 		final String methodName = this.getClass().getSimpleName() + "::listNodes";	
 
 		String messageDescription = null;
@@ -344,7 +341,7 @@ public class XMLFunctions implements Action{
 		String fieldXMLType = null;
 
 
-		String nodeName = node.getNodeName();
+	//	String nodeName = node.getNodeName();
 		short type = node.getNodeType();
 		//System.out.println(indent+" Node: " + nodeName + " " + nodeType(type));
 
@@ -360,7 +357,7 @@ public class XMLFunctions implements Action{
 		if(list.getLength() > 0) {                  
 			//System.out.println(indent+" Child Nodes of " + nodeName + " are:");
 			for(int i = 0 ; i<list.getLength() ; i++) {
-				listNodes(list.item(i),indent+"  ", properties);     
+				listNodes(list.item(i),indent+"  ", properties , implementationLanguage);     
 			}
 		}else {
 			NamedNodeMap nameNodeMap = node.getAttributes();
@@ -375,14 +372,20 @@ public class XMLFunctions implements Action{
 
 				MapDataTypes mapX = new MapDataTypes(); 
 
-				String fieldTypeJava = mapX.getJavaTypeNameForXMLTypeName(fieldXMLType);
-
+				String fieldTypeImplementationLanguage = null;
+				
+				if (implementationLanguage==ImplementationLanguage .Java) {
+				
+					fieldTypeImplementationLanguage = mapX.getJavaTypeNameForXMLTypeName(fieldXMLType);
+				}else if (implementationLanguage==ImplementationLanguage .q) {
+					fieldTypeImplementationLanguage = mapX.getQTypeNameForXMLTypeName(fieldXMLType);
+				}
 
 				//String fieldName, String fieldType, Boolean inConstructorOne, String description, String semanticType
 				Field addThisField = new Field(
 						fieldName
 						, fieldXMLType
-						, fieldTypeJava
+						, fieldTypeImplementationLanguage
 						, Boolean.TRUE
 						, messageDescription
 						, messageSemanticType
@@ -397,7 +400,7 @@ public class XMLFunctions implements Action{
 				.append(", stringID=").append(messageID)					
 				.append(", fieldName=").append(fieldName)
 				.append(", fieldXMLType=").append(fieldXMLType)
-				.append(",  fieldTypeJava=").append(fieldTypeJava)
+				.append(",  fieldTypeImplementation=").append(fieldTypeImplementationLanguage)
 				.append(", stringSemanticType=").append(messageSemanticType)										
 				;
 
@@ -415,5 +418,4 @@ public class XMLFunctions implements Action{
 	public void actionEventError(String methodName, String event) {
 		this.sendActionEventError(methodName, event);		
 	}
-
 }

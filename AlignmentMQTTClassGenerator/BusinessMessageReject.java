@@ -1,17 +1,17 @@
-package com.alignmentsystems.sbe._2020_09_01_08_39_34;
+package com.alignmentsystems.sbe._2020_09_02_01_26_02;
 
 
 //Author : John Greenan
-//Creation Date : 2020_09_01_08_39_34
+//Creation Date : 2020_09_02_01_26_02
 
 public class BusinessMessageReject implements Serializable {
 
  /** Serial Version UID. */
  private static final long serialVersionUID = 1L;
 
- private String businesRejectRefId;
+ private idString businesRejectRefId;
  private businessRejectReasonEnum businessRejectReason;
- private String text;
+ private DATA text;
 
 //Implementation required
 
@@ -25,7 +25,7 @@ public class BusinessMessageReject implements Serializable {
 
 
 
-public BusinessMessageReject(String businesRejectRefId , businessRejectReasonEnum businessRejectReason , String text){
+public BusinessMessageReject(idString businesRejectRefId , businessRejectReasonEnum businessRejectReason , DATA text){
 	this.BusinesRejectRefId = businesRejectRefId ,
 	this.BusinessRejectReason = businessRejectReason ,
 	this.Text = text
@@ -82,11 +82,11 @@ public String toString() {
 
 
  
- public String getBusinesRejectRefId() {
+ public idString getBusinesRejectRefId() {
      return this.businesRejectRefId;
  }
  
- public void setBusinesRejectRefId(String businesRejectRefId) {
+ public void setBusinesRejectRefId(idString businesRejectRefId) {
      this.businesRejectRefId = businesRejectRefId;
  } 
  public businessRejectReasonEnum getBusinessRejectReason() {
@@ -96,11 +96,11 @@ public String toString() {
  public void setBusinessRejectReason(businessRejectReasonEnum businessRejectReason) {
      this.businessRejectReason = businessRejectReason;
  } 
- public String getText() {
+ public DATA getText() {
      return this.text;
  }
  
- public void setText(String text) {
+ public void setText(DATA text) {
      this.text = text;
  } 
 }

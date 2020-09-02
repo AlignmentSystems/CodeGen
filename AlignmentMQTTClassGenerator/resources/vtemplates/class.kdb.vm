@@ -1,0 +1,20 @@
+${author}
+${creationDate}
+
+#set($space=" ")
+#set($comma=",")
+#set($equals="=")
+#set($colon=":")
+#set($semicolon=";")
+#foreach($property in $properties )
+#if( $foreach.index ==0) #set($foo=$property.getFieldNameLowercaseFirstLetter()+$colon+$space+$property.getFieldTypeImplementationLanguage()+$space+$semicolon+$space) 
+#else
+#if( $foreach.hasNext )
+#set($foo=$foo+$property.getFieldNameLowercaseFirstLetter()+$colon+$space+$property.getFieldTypeImplementationLanguage()+$space+$semicolon+$space) 
+#else
+#set($foo=$foo+$property.getFieldNameLowercaseFirstLetter()+$colon+$space+$property.getFieldTypeImplementationLanguage())
+#end
+#end 
+#end 
+
+${className}:([] $foo)

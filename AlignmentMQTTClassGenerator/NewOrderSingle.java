@@ -1,17 +1,17 @@
-package com.alignmentsystems.sbe._2020_09_01_08_39_34;
+package com.alignmentsystems.sbe._2020_09_02_01_26_02;
 
 
 //Author : John Greenan
-//Creation Date : 2020_09_01_08_39_34
+//Creation Date : 2020_09_02_01_26_02
 
 public class NewOrderSingle implements Serializable {
 
  /** Serial Version UID. */
  private static final long serialVersionUID = 1L;
 
- private String clOrdId;
- private String account;
- private String symbol;
+ private idString clOrdId;
+ private idString account;
+ private idString symbol;
  private sideEnum side;
  private timestampEncoding transactTime;
  private qtyEncoding orderQty;
@@ -31,7 +31,7 @@ public class NewOrderSingle implements Serializable {
 
 
 
-public NewOrderSingle(String clOrdId , String account , String symbol , sideEnum side , timestampEncoding transactTime , qtyEncoding orderQty , ordTypeEnum ordType , optionalDecimalEncoding price , optionalDecimalEncoding stopPx){
+public NewOrderSingle(idString clOrdId , idString account , idString symbol , sideEnum side , timestampEncoding transactTime , qtyEncoding orderQty , ordTypeEnum ordType , optionalDecimalEncoding price , optionalDecimalEncoding stopPx){
 	this.ClOrdId = clOrdId ,
 	this.Account = account ,
 	this.Symbol = symbol ,
@@ -100,25 +100,25 @@ public String toString() {
 
 
  
- public String getClOrdId() {
+ public idString getClOrdId() {
      return this.clOrdId;
  }
  
- public void setClOrdId(String clOrdId) {
+ public void setClOrdId(idString clOrdId) {
      this.clOrdId = clOrdId;
  } 
- public String getAccount() {
+ public idString getAccount() {
      return this.account;
  }
  
- public void setAccount(String account) {
+ public void setAccount(idString account) {
      this.account = account;
  } 
- public String getSymbol() {
+ public idString getSymbol() {
      return this.symbol;
  }
  
- public void setSymbol(String symbol) {
+ public void setSymbol(idString symbol) {
      this.symbol = symbol;
  } 
  public sideEnum getSide() {

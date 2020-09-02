@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<sbe:messageSchema
+	xmlns:sbe="http://fixprotocol.io/2016/sbe"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" package="Examples"
+	id="91" version="0" byteOrder="littleEndian"
+	xsi:schemaLocation="http://fixprotocol.io/2016/sbe sbe.xsd">
+	<types>
+		
+		<type name="sensorObservation" primitiveType="int64"
+			semanticType="obs" />
+	</types>
+	<sbe:message name="SensorObservation" id="42"
+		blockLength="40" semanticType="sO">
+		<field name="UUIDmsb" id="1" type="obs" offset="0" semanticType="int64" />
+		<field name="UUIDlsb" id="2" type="obs" offset="0" semanticType="int64" />
+		<field name="x" id="3" type="obs" offset="0" semanticType="int64" />
+		<field name="y" id="4" type="obs" offset="0" semanticType="int64" />
+		<field name="z" id="5" type="obs" offset="0" semanticType="int64" />
+	</sbe:message>
+</sbe:messageSchema>
