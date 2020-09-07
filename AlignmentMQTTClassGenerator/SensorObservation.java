@@ -1,8 +1,8 @@
-package com.alignmentsystems.sbe._2020_09_02_03_57_15;
+package com.alignmentsystems.sbe._2020_09_07_03_20_25;
 
 
 //Author : John Greenan
-//Creation Date : 2020_09_02_03_57_15
+//Creation Date : 2020_09_07_03_20_25
 
 public class SensorObservation implements Serializable {
 
@@ -14,6 +14,8 @@ public class SensorObservation implements Serializable {
  private Long x;
  private Long y;
  private Long z;
+ private Long instantLong;
+ private obsInt instantInt;
 
 //Implementation required
 
@@ -27,12 +29,14 @@ public class SensorObservation implements Serializable {
 
 
 
-public SensorObservation(Long uUIDmsb , Long uUIDlsb , Long x , Long y , Long z){
+public SensorObservation(Long uUIDmsb , Long uUIDlsb , Long x , Long y , Long z , Long instantLong , obsInt instantInt){
 	this.UUIDmsb = uUIDmsb ,
 	this.UUIDlsb = uUIDlsb ,
 	this.x = x ,
 	this.y = y ,
-	this.z = z
+	this.z = z ,
+	this.instantLong = instantLong ,
+	this.instantInt = instantInt
 }
 
 
@@ -82,7 +86,9 @@ public String toString() {
 	+ ", uUIDlsb =" + uUIDlsb
 	+ ", x =" + x
 	+ ", y =" + y
-	+ ", z =" + z;
+	+ ", z =" + z
+	+ ", instantLong =" + instantLong
+	+ ", instantInt =" + instantInt;
 }
 
 
@@ -122,5 +128,19 @@ public String toString() {
  
  public void setZ(Long z) {
      this.z = z;
+ } 
+ public Long getInstantLong() {
+     return this.instantLong;
+ }
+ 
+ public void setInstantLong(Long instantLong) {
+     this.instantLong = instantLong;
+ } 
+ public obsInt getInstantInt() {
+     return this.instantInt;
+ }
+ 
+ public void setInstantInt(obsInt instantInt) {
+     this.instantInt = instantInt;
  } 
 }

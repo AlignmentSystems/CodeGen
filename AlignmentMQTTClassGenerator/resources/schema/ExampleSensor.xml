@@ -16,5 +16,7 @@
 		<field name="x" id="3" type="obs" offset="0" semanticType="int64" />
 		<field name="y" id="4" type="obs" offset="0" semanticType="int64" />
 		<field name="z" id="5" type="obs" offset="0" semanticType="int64" />
+		<field name="instantLong" id="5" type="obs" offset="0" semanticType="int64" />
+		<field name="instantInt" id="5" type="obsInt" offset="0" semanticType="int32" />
 	</sbe:message>
 </sbe:messageSchema>

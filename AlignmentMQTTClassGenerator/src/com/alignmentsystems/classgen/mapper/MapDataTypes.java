@@ -20,6 +20,8 @@ public final  class MapDataTypes {
 		fromXmlToJavaType.put("obs", new Mapper(Long.class.getSimpleName(), null , null));
 			
 		fromXmlToqType.put("obs", new Mapper("`long$()", null , null));
+		fromXmlToqType.put("obsInt", new Mapper("`int$()", null , null));
+
 	}
 	
 	/**
